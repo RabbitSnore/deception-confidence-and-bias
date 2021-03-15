@@ -1,0 +1,35 @@
+---
+title: "Confidence and Bias -- Analysis"
+author: "Timothy J. Luke"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    theme: darkly
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+source("./R/wrangle.R")
+source("./R/analyze.R")
+
+```
+
+# Overview
+
+# Does sender confidence influence bias?
+
+## Raw judgments
+
+## Signal detection
+
+As a robustness check, I assessed whether confidence condition predicted the signal detection index "c" -- a measure of bias. As can be seen below, the results of this analysis support the results of the models examining raw judgments.
+
+```{r}
+summary(sdt_model_base)
+```
+
+Personally, I think the analyses of raw judgments are more informative (and more intuitve) than the signal detection analysis.
+

@@ -31,7 +31,10 @@ judge_rates_cond <-
 judge_long %>% 
   group_by(confidence_condition) %>% 
   summarise(
-    mean = mean(pred, na.rm = TRUE)
+    mean  = mean(pred, na.rm = TRUE),
+    se    = sd(pred, na.rm = TRUE)/sqrt(sum(!is.na(pred))),
+    ci_lb = mean - se*qnorm(.975),
+    ci_ub = mean + se*qnorm(.975)
   )
 
 #### By sender
@@ -40,7 +43,10 @@ judge_rates_sender <-
   judge_long %>% 
   group_by(sender) %>% 
   summarise(
-    mean = mean(pred, na.rm = TRUE)
+    mean = mean(pred, na.rm = TRUE),
+    se    = sd(pred, na.rm = TRUE)/sqrt(sum(!is.na(pred))),
+    ci_lb = mean - se*qnorm(.975),
+    ci_ub = mean + se*qnorm(.975)
   )
 
 #### By content
@@ -49,7 +55,10 @@ judge_rates_content <-
   judge_long %>% 
   group_by(content) %>% 
   summarise(
-    mean = mean(pred, na.rm = TRUE)
+    mean = mean(pred, na.rm = TRUE),
+    se    = sd(pred, na.rm = TRUE)/sqrt(sum(!is.na(pred))),
+    ci_lb = mean - se*qnorm(.975),
+    ci_ub = mean + se*qnorm(.975)
   )
 
 ## Signal detection (c)
