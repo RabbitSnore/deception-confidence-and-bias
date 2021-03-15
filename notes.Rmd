@@ -1,0 +1,38 @@
+---
+title: "Confidence and Bias -- Notes"
+author: "Timothy J. Luke"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(readxl)
+
+# Load data and codebook
+
+raw <- read_xlsx("confidence_emotion_data.xlsx", sheet = 1)
+
+codebook <- read_xlsx("confidence_emotion_data.xlsx", sheet = 2)
+
+```
+
+# Initial exploration
+
+## Codebook
+
+```{r}
+codebook %>% 
+  knitr::kable()
+```
+
+## Raw data
+
+```{r}
+glimpse(raw)
+```
+
+
+
