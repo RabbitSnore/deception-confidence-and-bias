@@ -9,7 +9,7 @@ output:
     toc_float: true
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
 source("./R/wrangle.R")
@@ -21,59 +21,106 @@ source("./R/analyze.R")
 
 ## Raw judgments
 
-To assess whether sender confidence (a manipulated variable) increases truth bias, I conducted a mixed effects logistic regression analysis. I began with a model in which veracity judgments (0 = lie, 1 = truth) were predicted by actual sender veracity, as well as random intercepts for each receiver and each sender, nested within content types. I then fit a model that added confidence condition, and I compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested better fit with the addition of confidence condition as a predictor.
+To assess whether sender confidence (a manipulated variable) increases truth bias, I conducted a mixed effects logistic regression analysis. I began with a model in which veracity judgments (0 = lie, 1 = truth) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. I then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then I compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested better fit with the addition of the interaction term.
 
 ```{r}
-lrt_judge
+lrt_judge_fixed
 ```
 
-As can be seen below, the coefficient for confidence condition is positive and significant, suggesting that sender confidence makes receivers more likely to judge messages as truthful. Actual veracity was not a significant predictor of judged veracity.
+Actual veracity was not a significant predictor of judged veracity. 
 
-Additionally, there is quite a bit of variance in the tendency for different senders to be judged as telling the truth and different content to be judged as truthful. There is less -- but still some -- variance in receivers' tendency to judge messages as truthful.
+The coefficient for confidence condition is positive and significant, suggesting that sender confidence makes receivers more likely to judge messages as truthful, for the holiday messages. The coefficients for the interactions suggest that sender confidence had different effects depending on the message content. For bereavement messages, the effect was similar to the effect for holiday messages. For quarrels, high sender confidence seemed to decrease the rate of truth judgments. For accidents, high sender confidence did not seem to have much of an effect (note that the interaction coefficient is significant, but the sum of the relevant coefficients suggests only a small difference in effects).
+
+Additionally, there is some variance in the tendency for different senders to be judged as telling the truth. There is less -- but still some -- variance in receivers' tendency to judge messages as truthful.
 
 ```{r}
-summary(judge_model_conf)
+summary(judge_fixed_conf_int)
 ```
-
-Converting the log odds coefficient to an odds ratio, we get the following:
-
-```{r}
-exp(summary(judge_model_conf)$coefficients[2, 1])
-```
-
-The effect is not enormous, but with as many observations as we have here, we can estimate the effect with some reasonable precision.
 
 ### Mean predicted truth judgment rates
 
-For a more intuitive examination of the results of the model above, we can extract predicted truth judgment rates and calculate means (and confidence intervals) for each condition, sender, and content type.
+For a more intuitive examination of the results of the model above, we can extract predicted truth judgment rates and calculate means for each condition, sender, and content type. For each mean predicted rate of truth judgments, I computed 95% parametric bootstrap confidence intervals using 500 simulations.
 
 First, we can examine the difference in truth judgment rates by condition. Below, the rates are displayed as proportions of truth judgments (i.e., values closer to 1 indicate higher truth bias). We can see that the high confidence condition is predicted to be judged more truthful more frequently, by about 5%.
 
 ```{r}
-judge_rates_cond
+boot_ci_fixed_cond
 ```
 
 As we saw above, there is substantial variation in the rate at which different senders are predicted to be judged as telling the truth.
 
 ```{r}
-judge_rates_sender
+boot_ci_fixed_sender
 ```
 
 We can also see that the mean predicted truth judgment rates vary substantially between the content types. Bereavement and holidays are predicted to be judged truthful the most frequently, and interestingly, quarrels are predicted to be judged deceptive a narrow majority of the time. Car accidents are predicted to be judged truthful narrowly above 50% of the time, but judged truthful less frequently than bereavements and holidays.
 
 ```{r}
-judge_rates_content
+boot_ci_fixed_cont
 ```
 
-In short, we see that sender confidence appears to influence veracity judgments (or truth bias), and the specific sender and the content of the message also exert substantial influence on veracity judgments.
+We can examine the interaction between confidence condition and message content as well. We can see that, as suggested by the model above, there are similar effects of sender confidence for holidays and bereavement messages. The rate of truth judgments for accidents does not change much. If anything, it increases by just a few percentage points, but the effect (if it is present at all) is more muted compared to holidays and bereavement messages. Quarrels seem to become somewhat less credible when delivered with high confidence. 
+
+```{r}
+boot_ci_fixed_inter
+```
+
+In short, we see that sender confidence appears to influence veracity judgments (or truth bias). This effect depends on the content of the message, and the specific sender also exerts substantial influence on veracity judgments.
 
 ## Signal detection
 
-As a robustness check, I assessed whether confidence condition predicted the signal detection index "c" -- a measure of bias. To perform this check, after calculating c for each receiver, I fit a linear regression model predicting c from confidence condition. As can be seen below, the results of this analysis support the results of the models examining raw judgments.
+As a robustness check, I assessed whether confidence condition predicted the signal detection index "c" -- a measure of bias. To perform this check, after calculating c for each receiver (collapsed across the content types), I fit a linear regression model predicting c from confidence condition. As can be seen below, the results of this analysis support the results of the models examining raw judgments.
 
 ```{r}
 summary(sdt_model_base)
 ```
 
-Personally, I think the analyses of raw judgments are more informative (and more intuitve) than the signal detection analysis. But it's nice to see this kind of consistency.
+Personally, I think the analyses of raw judgments are more informative (and more intuitive) than the signal detection analysis. But it's nice to see this kind of consistency.
+
+## Message content as a random effect
+
+Another way of analyzing these data is to model message content as a random effect, rather than a fixed effect (as above). This approach would imply that the four content types represent a random sample from a population of possible narrative types. Whether this approach is more or less appropriate than the fixed effect approach taken above can be debated. However, the results are substantively the same as the fixed effect approach presented above.
+
+We start by comparing three models: (1) an initial model with actual sender veracity as a predictor of veracity judgments, with random intercepts for receivers and for senders nested in content types, (2) a model which adds confidence condition as a predictor, and (3) a model that adds random slopes for confidence condition for each content type (which represent an interaction between content and confidence). I compared these models with a likelihood ratio test.
+
+As above, the model implying an interaction between content and confidence appears to be the best fitting of the three.
+
+```{r}
+lrt_judge
+```
+
+The model with random slopes fits the data the best, even though none of the fixed effects are significant (see below). In the model with only random intercepts, we see that there is a tendency for sender confidence to increase truth judgments on average, but adding the interaction substantially increases the standard error for this coefficient. Thus, we see evidence for an interaction between content type and confidence condition, such that sender confidence has effects of different sizes and/or directions depending on the content of the message. 
+
+These models are consistent with the fixed content effect approach above, as well as the signal detection model.
+
+```{r}
+summary(judge_model_conf)
+```
+
+```{r}
+summary(judge_model_conf_int)
+```
+
+### Mean predicted truth judgment rates
+
+As above, for a more intuitive examination of the results of the model above, we can use these models to extract predicted truth judgment rates and calculate means for each condition, sender, and content type. Again, for each mean predicted rate of truth judgments, I computed 95% parametric bootstrap confidence intervals using 500 simulations.
+
+These predicted rates of truth judgments are highly consistent with the approach presented above.
+
+```{r}
+boot_ci_cond
+```
+
+```{r}
+boot_ci_sender
+```
+
+```{r}
+boot_ci_cont
+```
+
+```{r}
+boot_ci_inter
+```
+
 

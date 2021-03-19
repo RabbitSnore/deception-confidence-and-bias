@@ -43,3 +43,6 @@ vignettes/*.pdf
 *.xlsx
 *.html
 *.docx
+
+*.ppk
+ssh_pk
