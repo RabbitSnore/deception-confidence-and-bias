@@ -21,7 +21,7 @@ source("./R/analyze.R")
 
 ## Raw judgments
 
-To assess whether sender confidence (a manipulated variable) increases truth bias, I conducted a mixed effects logistic regression analysis. I began with a model in which veracity judgments (0 = lie, 1 = truth) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. I then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then I compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested better fit with the addition of the interaction term.
+To assess whether sender confidence (a manipulated variable) increases truth bias, we conducted a mixed effects logistic regression analysis. We began with a model in which veracity judgments (0 = lie, 1 = truth) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested better fit with the addition of the interaction term.
 
 ```{r}
 lrt_judge_fixed
@@ -29,7 +29,7 @@ lrt_judge_fixed
 
 Actual veracity was not a significant predictor of judged veracity. 
 
-The coefficient for confidence condition is positive and significant, suggesting that sender confidence makes receivers more likely to judge messages as truthful, for the holiday messages. The coefficients for the interactions suggest that sender confidence had different effects depending on the message content. For bereavement messages, the effect was similar to the effect for holiday messages. For quarrels, high sender confidence seemed to decrease the rate of truth judgments. For accidents, high sender confidence did not seem to have much of an effect (note that the interaction coefficient is significant, but the sum of the relevant coefficients suggests only a small difference in effects).
+The coefficient for confidence condition is positive and significant, suggesting that sender confidence makes receivers more likely to judge messages as truthful, for the holiday messages. The coefficients for the interactions suggest that sender confidence had different effects depending on the message content. For bereavement messages, the effect was similar to the effect for holiday messages. For quarrels, high sender confidence seemed to decrease the rate of truth judgments. For accidents, high sender confidence did not seem to have much of an effect (note that the interaction coefficient is significant, but the sum of the relevant coefficients suggests only a small difference in effects). That is, for accidents, high confidence had less of an impact on truth judgments than it did for holiday messages.
 
 Additionally, there is some variance in the tendency for different senders to be judged as telling the truth. There is less -- but still some -- variance in receivers' tendency to judge messages as truthful.
 
@@ -75,13 +75,13 @@ As a robustness check, I assessed whether confidence condition predicted the sig
 summary(sdt_model_base)
 ```
 
-Personally, I think the analyses of raw judgments are more informative (and more intuitive) than the signal detection analysis. But it's nice to see this kind of consistency.
+We think the analyses of raw judgments are more informative (and more intuitive) than the signal detection analysis. But it's nice to see this kind of consistency.
 
 ## Message content as a random effect
 
 Another way of analyzing these data is to model message content as a random effect, rather than a fixed effect (as above). This approach would imply that the four content types represent a random sample from a population of possible narrative types. Whether this approach is more or less appropriate than the fixed effect approach taken above can be debated. However, the results are substantively the same as the fixed effect approach presented above.
 
-We start by comparing three models: (1) an initial model with actual sender veracity as a predictor of veracity judgments, with random intercepts for receivers and for senders nested in content types, (2) a model which adds confidence condition as a predictor, and (3) a model that adds random slopes for confidence condition for each content type (which represent an interaction between content and confidence). I compared these models with a likelihood ratio test.
+We start by comparing three models: (1) an initial model with actual sender veracity as a predictor of veracity judgments, with random intercepts for receivers and for senders nested in content types, (2) a model which adds confidence condition as a predictor, and (3) a model that adds random slopes for confidence condition for each content type (which represent an interaction between content and confidence). We compared these models with a likelihood ratio test.
 
 As above, the model implying an interaction between content and confidence appears to be the best fitting of the three.
 
