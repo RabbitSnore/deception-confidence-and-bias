@@ -67,6 +67,10 @@ boot_ci_fixed_inter
 
 In short, we see that sender confidence appears to influence veracity judgments (or truth bias). This effect depends on the content of the message, and the specific sender also exerts substantial influence on veracity judgments.
 
+```{r}
+boot_ci_fixed_inter_2
+```
+
 ## Signal detection
 
 As a robustness check, I assessed whether confidence condition predicted the signal detection index "c" -- a measure of bias. To perform this check, after calculating c for each receiver (collapsed across the content types), I fit a linear regression model predicting c from confidence condition. As can be seen below, the results of this analysis support the results of the models examining raw judgments.
@@ -123,11 +127,58 @@ boot_ci_cont
 boot_ci_inter
 ```
 
+### Raw veracity judgment rates
+
+Here are the overall veracity judgment rates. People were somewhat truth-biased.
+
+```{r}
+table(judge_long$judgment)/sum(table(judge_long$judgment))
+```
+
+People were more truth-biased when the sender was more confident, across the
+content types.
+
+```{r}
+judge_long %>% 
+  group_by(confidence_condition) %>% 
+  summarise(
+    truth_rate = sum(judgment == 1) / n()
+  ) %>% 
+  knitr::kable()
+```
+
+```{r}
+judge_long %>% 
+  group_by(content) %>% 
+  summarise(
+    truth_rate = sum(judgment == 1) / n()
+  ) %>% 
+  knitr::kable()
+```
+
+```{r}
+judge_long %>% 
+  group_by(content, confidence_condition) %>% 
+  summarise(
+    truth_rate = sum(judgment == 1) / n()
+  ) %>% 
+  knitr::kable()
+```
+
+```{r}
+judge_long %>% 
+  group_by(content, confidence_condition, veracity) %>% 
+  summarise(
+    truth_rate = sum(judgment == 1) / n()
+  ) %>% 
+  knitr::kable()
+```
+
 # Does sender confidence influence receiver accuracy?
 
 ## Raw judgments
 
-To assess whether sender confidence influenced receiver accuracy, we conducted a mixed effects logistic regression analysis. As with the analysis of truth judgments, we began with a model in which judgment accuracy (0 = incorrect, 1 = correct) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested the subsequent models after the initial model offered no improvement.
+To assess whether sender confidence influenced receiver accuracy, we conducted a mixed effects logistic regression analysis. As with the analysis of truth judgments, we began with a model in which judgment accuracy (0 = incorrect, 1 = correct) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested the subsequent models after the initial model offered no significant improvement.
 
 ```{r}
 lrt_acc
@@ -163,7 +214,12 @@ The effect of the truth bias on accuracy is evident when splitting accuracy by
 veracity condition.
 
 ```{r}
-table(accuracy_long$veracity, accuracy_long$accuracy)/rowSums(table(accuracy_long$veracity, accuracy_long$accuracy))
+accuracy_long %>% 
+  group_by(veracity) %>% 
+  summarise(
+    acc_rate = sum(accuracy == 1) / n()
+  ) %>% 
+  knitr::kable()
 ```
 
 Overall accuracy between the content types varied slightly, but the model above 
@@ -171,7 +227,12 @@ suggests that these differences were not estimated precisely enough for us to
 conclude that they are reliable.
 
 ```{r}
-table(accuracy_long$content, accuracy_long$accuracy)/rowSums(table(accuracy_long$content, accuracy_long$accuracy))
+accuracy_long %>% 
+  group_by(content) %>% 
+  summarise(
+    acc_rate = sum(accuracy == 1) / n()
+  ) %>% 
+  knitr::kable()
 ```
 
 Differences across content in the extent to which truth bias influenced accuracy 
@@ -180,8 +241,23 @@ That is, when there is greater truth bias, there is better accuracy for truthful
 messages. No surprises there.
 
 ```{r}
-table(accuracy_long$veracity, accuracy_long$accuracy, accuracy_long$content) / length(unique(accuracy_long$id))
+accuracy_long %>% 
+  group_by(content, veracity) %>% 
+  summarise(
+    acc_rate = sum(accuracy == 1) / n()
+  ) %>% 
+  knitr::kable()
 ```
+
+```{r}
+accuracy_long %>% 
+  group_by(content, confidence_condition, veracity) %>% 
+  summarise(
+    acc_rate = sum(accuracy == 1) / n()
+  ) %>% 
+  knitr::kable()
+```
+
 
 ## Signal detection
 

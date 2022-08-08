@@ -96,6 +96,81 @@ pred_inter <- function(x) {
   
 }
 
+pred_inter_2 <- function(x) {
+  
+  judge_long$pred_temp <- predict(x, type = "response")
+  
+  out <- c(
+    accident_low_t    = mean(
+      judge_long[judge_long$content == "accident"
+                 & judge_long$confidence_condition == 0
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    accident_low_f    = mean(
+      judge_long[judge_long$content == "accident"
+                 & judge_long$confidence_condition == 0
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+    bereavement_low_t   = mean(
+      judge_long[judge_long$content == "bereavement"
+                 & judge_long$confidence_condition == 0
+                 & veracity == "t", ]$pred_temp, na.rm = TRUE),
+    bereavement_low_f   = mean(
+      judge_long[judge_long$content == "bereavement"
+                 & judge_long$confidence_condition == 0
+                 & veracity == "f", ]$pred_temp, na.rm = TRUE),
+    holiday_low_t       = mean(
+      judge_long[judge_long$content == "holiday"
+                 & judge_long$confidence_condition == 0
+                 & judgel_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    holiday_low_f       = mean(
+      judge_long[judge_long$content == "holiday"
+                 & judge_long$confidence_condition == 0
+                 & judgel_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+    quarrel_low_t       = mean(
+      judge_long[judge_long$content == "quarrel"
+                 & judge_long$confidence_condition == 0
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    quarrel_low_f       = mean(
+      judge_long[judge_long$content == "quarrel"
+                 & judge_long$confidence_condition == 0
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+    accident_high_t     = mean(
+      judge_long[judge_long$content == "accident"
+                 & judge_long$confidence_condition == 1
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    accident_high_f     = mean(
+      judge_long[judge_long$content == "accident"
+                 & judge_long$confidence_condition == 1
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+    bereavement_high_t   = mean(
+      judge_long[judge_long$content == "bereavement"
+                 & judge_long$confidence_condition == 1
+                 & veracity == "t", ]$pred_temp, na.rm = TRUE),
+    bereavement_high_f   = mean(
+      judge_long[judge_long$content == "bereavement"
+                 & judge_long$confidence_condition == 1
+                 & veracity == "f", ]$pred_temp, na.rm = TRUE),
+    holiday_high_t       = mean(
+      judge_long[judge_long$content == "holiday"
+                 & judge_long$confidence_condition == 1
+                 & judgel_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    holiday_high_f       = mean(
+      judge_long[judge_long$content == "holiday"
+                 & judge_long$confidence_condition == 1
+                 & judgel_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+    quarrel_high_t       = mean(
+      judge_long[judge_long$content == "quarrel"
+                 & judge_long$confidence_condition == 1
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+    quarrel_high_f       = mean(
+      judge_long[judge_long$content == "quarrel"
+                 & judge_long$confidence_condition == 1
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+  )
+  
+  return(out)
+  
+}
+
 ##### Bootstrap confidence intervals (95% percentile CIs)
 
 bootstrap_ci <- function(boot_out) {
@@ -238,15 +313,23 @@ judge_fixed_conf <- glmer(judgment ~ veracity + content + confidence_condition +
 
 judge_fixed_conf_int <- glmer(judgment ~ veracity + content * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
 
+### Adding two way interactions
+
+judge_fixed_conf_int_2 <- glmer(judgment ~ (veracity + content + confidence_condition)^2 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+
+### Adding three way interactions
+
+judge_fixed_conf_int_3 <- glmer(judgment ~ (veracity + content + confidence_condition)^3 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+
 ### Compare models
 
-lrt_judge_fixed <- anova(judge_fixed_base, judge_fixed_conf, judge_fixed_conf_int, test = "LRT")
+lrt_judge_fixed <- anova(judge_fixed_base, judge_fixed_conf, judge_fixed_conf_int, judge_fixed_conf_int_2, judge_fixed_conf_int_3, test = "LRT")
 
 ## Mean predicted truth judgment rates
 
 ### Add predictions
 
-judge_long$pred_fixed <- predict(judge_fixed_conf_int, type = "response")
+judge_long$pred_fixed <- predict(judge_fixed_conf_int_2, type = "response")
 
 ### By condition
 
@@ -263,7 +346,7 @@ if (file.exists("./RDS/boot_fixed_cond.rds")) {
   
 } else {
   
-  boot_fixed_cond <- bootMer(judge_fixed_conf_int, pred_cond, nsim = 500, parallel = "multicore")
+  boot_fixed_cond <- bootMer(judge_fixed_conf_int_2, pred_cond, nsim = 500, parallel = "multicore")
   
   saveRDS(boot_fixed_cond, "./RDS/boot_fixed_cond.rds")
   
@@ -286,7 +369,7 @@ if (file.exists("./RDS/boot_fixed_sender.rds")) {
   
 } else {
   
-  boot_fixed_sender <- bootMer(judge_fixed_conf_int, pred_sender, nsim = 500, parallel = "multicore")
+  boot_fixed_sender <- bootMer(judge_fixed_conf_int_2, pred_sender, nsim = 500, parallel = "multicore")
   
   saveRDS(boot_fixed_sender, "./RDS/boot_fixed_sender.rds")
   
@@ -309,7 +392,7 @@ if (file.exists("./RDS/boot_fixed_cont.rds")) {
   
 } else {
   
-  boot_fixed_cont <- bootMer(judge_fixed_conf_int, pred_cont, nsim = 500, parallel = "multicore")
+  boot_fixed_cont <- bootMer(judge_fixed_conf_int_2, pred_cont, nsim = 500, parallel = "multicore")
   
   saveRDS(boot_fixed_cont, "./RDS/boot_fixed_cont.rds")
   
@@ -332,13 +415,36 @@ if (file.exists("./RDS/boot_fixed_inter.rds")) {
   
 } else {
   
-  boot_fixed_inter <- bootMer(judge_fixed_conf_int, pred_inter, nsim = 500, parallel = "multicore")
+  boot_fixed_inter <- bootMer(judge_fixed_conf_int_2, pred_inter, nsim = 500, parallel = "multicore")
   
   saveRDS(boot_fixed_inter, "./RDS/boot_fixed_inter.rds")
   
 }
 
 boot_ci_fixed_inter <- bootstrap_ci(boot_fixed_inter)
+
+### By condition, content, and veracity
+
+judge_rates_fixed_cond_cont_ver <- 
+  judge_long %>% 
+  group_by(confidence_condition, content, veracity) %>% 
+  summarise(
+    mean  = mean(pred_fixed, na.rm = TRUE)
+  )
+
+if (file.exists("./RDS/boot_fixed_inter_2.rds")) {
+  
+  boot_fixed_inter_2 <- readRDS("./RDS/boot_fixed_inter_2.rds")
+  
+} else {
+  
+  boot_fixed_inter_2 <- bootMer(judge_fixed_conf_int_2, pred_inter_2, nsim = 500, parallel = "multicore")
+  
+  saveRDS(boot_fixed_inter, "./RDS/boot_fixed_inter_2.rds")
+  
+}
+
+boot_ci_fixed_inter_2 <- bootstrap_ci(boot_fixed_inter_2)
 
 # Does sender confidence influence receiver accuracy? --------------------------
 
@@ -354,13 +460,21 @@ acc_model_base <- glmer(accuracy ~ veracity + content + (1|id) + (1|sender), fam
 
 acc_model_conf <- glmer(accuracy ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
-### Random slopes for the interaction between confidence condition and content
+### The interaction between confidence condition and content
 
-acc_model_conf_int <- glmer(accuracy ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_conf_int <- glmer(accuracy ~ veracity + content * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Interaction between veracity and content
+
+acc_model_conf_int_2 <- glmer(accuracy ~ (veracity + content + confidence_condition)^2 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Three way interactions
+
+acc_model_conf_int_3 <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### Compare models
 
-lrt_acc <- anova(acc_model_base, acc_model_conf, acc_model_conf_int, test = "LRT")
+lrt_acc <- anova(acc_model_base, acc_model_conf, acc_model_conf_int, acc_model_conf_int_2, acc_model_conf_int_3, test = "LRT")
 
 ## Signal detection approach
 
@@ -368,10 +482,14 @@ sdt_model_acc <- lm(dprime ~ confidence_condition,  data = sdt_data)
 
 ## Does confidence predict accuracy?
 
-### A model adding receiver confidence
+### Simple model
 
-acc_conf_model_base <- glmer(accuracy ~ veracity + content + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_conf_model_comp <- glmer(accuracy ~ confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### A model adding receiver confidence to retained model
+
+acc_conf_model_comp <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### Comparison with base accuracy model
 
-lrt_confidence <- anova(acc_model_base, acc_conf_model_base)
+lrt_confidence <- anova(acc_model_conf_int_3, acc_conf_model_comp)
