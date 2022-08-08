@@ -1,14 +1,14 @@
-#######################################################################
+################################################################################
 
 # Confidence and Bias -- Loading and wrangling
 
-#######################################################################
+################################################################################
 
-# Set up enviroment ---------------------------------------------------
+# Set up environment -----------------------------------------------------------
 
 set.seed(1138)
 
-# Does sender confidence influence bias? ------------------------------
+# Does sender confidence influence bias? ---------------------------------------
 
 ## Raw judgments
 
@@ -339,3 +339,39 @@ if (file.exists("./RDS/boot_fixed_inter.rds")) {
 }
 
 boot_ci_fixed_inter <- bootstrap_ci(boot_fixed_inter)
+
+# Does sender confidence influence receiver accuracy? --------------------------
+
+## Raw judgments
+
+accuracy_long$content <- factor(accuracy_long$content, levels = c("holiday", "bereavement", "accident", "quarrel"))
+
+### A base model with only random effects and veracity condition
+
+acc_model_base <- glmer(accuracy ~ veracity + content + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Adding sender confidence
+
+acc_model_conf <- glmer(accuracy ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Random slopes for the interaction between confidence condition and content
+
+acc_model_conf_int <- glmer(accuracy ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Compare models
+
+lrt_acc <- anova(acc_model_base, acc_model_conf, acc_model_conf_int, test = "LRT")
+
+## Signal detection approach
+
+sdt_model_acc <- lm(dprime ~ confidence_condition,  data = sdt_data)
+
+## Does confidence predict accuracy?
+
+### A model adding receiver confidence
+
+acc_conf_model_base <- glmer(accuracy ~ veracity + content + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### Comparison with base accuracy model
+
+lrt_confidence <- anova(acc_model_base, acc_conf_model_base)

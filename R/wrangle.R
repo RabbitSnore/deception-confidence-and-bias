@@ -46,6 +46,20 @@ accuracy_long <- raw %>%
   ) %>% 
   extract("name", c("sender", "content", "veracity"), "acc_(.*)_(.*)_(.)")
 
+## Long form receiver confidence, to add to accuracy data
+
+confidence_long <- raw %>% 
+  pivot_longer(
+    cols = starts_with("conf_"),
+    names_to = "name",
+    values_to = "confidence"
+  ) %>% 
+  extract("name", c("sender", "content", "veracity"), "conf_(.*)_(.*)_(.)") %>% 
+  select(id, sender, content, veracity, confidence)
+
+accuracy_long <- accuracy_long %>% 
+  left_join(confidence_long, by = c("id", "sender", "content", "veracity"))
+
 ## Signal detection
 
 ### Hits, false alarms, misses, correct rejections

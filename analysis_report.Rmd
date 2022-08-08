@@ -123,4 +123,93 @@ boot_ci_cont
 boot_ci_inter
 ```
 
+# Does sender confidence influence receiver accuracy?
+
+## Raw judgments
+
+To assess whether sender confidence influenced receiver accuracy, we conducted a mixed effects logistic regression analysis. As with the analysis of truth judgments, we began with a model in which judgment accuracy (0 = incorrect, 1 = correct) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested the subsequent models after the initial model offered no improvement.
+
+```{r}
+lrt_acc
+```
+
+Given that the model that added sender confidence as a predictor did not improve
+the model fit, there was no evidence that sender confidence predicted accuracy. 
+Actual sender veracity predicted accuracy, such that receivers were more 
+accurate judging truthful messages. This is unsurprising given the truth bias 
+that receivers exhibited. There was also no indication that the different content
+ types varied with regard to receiver accuracy.
+
+Interestingly but consistent with past research, we see that there was virtually
+ no variance in accuracy associated with receivers, but there was a substantial 
+amount of variance associated with senders.
+
+```{r}
+summary(acc_model_base)
+```
+
+### Accuracy rates
+
+It can be informative to examine the raw accuracy rates across and between
+conditions.
+
+The overall accuracy rate was approximately `r round((table(accuracy_long$accuracy)/sum(table(accuracy_long$accuracy)))[2], 3) * 100`%.
+
+```{r}
+table(accuracy_long$accuracy)/sum(table(accuracy_long$accuracy))
+```
+
+The effect of the truth bias on accuracy is evident when splitting accuracy by
+veracity condition.
+
+```{r}
+table(accuracy_long$veracity, accuracy_long$accuracy)/rowSums(table(accuracy_long$veracity, accuracy_long$accuracy))
+```
+
+Overall accuracy between the content types varied slightly, but the model above 
+suggests that these differences were not estimated precisely enough for us to 
+conclude that they are reliable.
+
+```{r}
+table(accuracy_long$content, accuracy_long$accuracy)/rowSums(table(accuracy_long$content, accuracy_long$accuracy))
+```
+
+Differences across content in the extent to which truth bias influenced accuracy 
+are what you would expect given the differences in truth bias across content.
+That is, when there is greater truth bias, there is better accuracy for truthful
+messages. No surprises there.
+
+```{r}
+table(accuracy_long$veracity, accuracy_long$accuracy, accuracy_long$content) / length(unique(accuracy_long$id))
+```
+
+## Signal detection
+
+Consistent with the analysis of the raw judgments, when we fit a linear model to
+predict d' (a measure of discrimination) with sender confidence as a predictor, 
+we see no evidence that sender confidence influences receiver accuracy.
+
+```{r}
+summary(sdt_model_acc)
+```
+
+# Does confidence predict accuracy?
+
+To assess the extent to which confidence predicted accuracy (viz. are correct
+judgments made more confidently?), we fit an additional logistic mixed effects 
+model predicting accuracy with sender veracity, content type, and receiver 
+confidence. We compared this model to the retained model predicting accuracy 
+above. Adding recevier confidence offered no significant improvement to the 
+model.
+
+```{r}
+lrt_confidence
+```
+
+For the sake of completeness, here is the main model output. As can be seen,
+confidence did not appear to predict accuracy at all.
+
+```{r}
+summary(acc_conf_model_base)
+```
 
