@@ -196,7 +196,7 @@ Interestingly but consistent with past research, we see that there was virtually
 amount of variance associated with senders.
 
 ```{r}
-summary(acc_model_base)
+summary(acc_model_conf_int_3)
 ```
 
 ### Accuracy rates

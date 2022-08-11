@@ -112,19 +112,19 @@ pred_inter_2 <- function(x) {
     bereavement_low_t   = mean(
       judge_long[judge_long$content == "bereavement"
                  & judge_long$confidence_condition == 0
-                 & veracity == "t", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
     bereavement_low_f   = mean(
       judge_long[judge_long$content == "bereavement"
                  & judge_long$confidence_condition == 0
-                 & veracity == "f", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
     holiday_low_t       = mean(
       judge_long[judge_long$content == "holiday"
                  & judge_long$confidence_condition == 0
-                 & judgel_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
     holiday_low_f       = mean(
       judge_long[judge_long$content == "holiday"
                  & judge_long$confidence_condition == 0
-                 & judgel_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
     quarrel_low_t       = mean(
       judge_long[judge_long$content == "quarrel"
                  & judge_long$confidence_condition == 0
@@ -144,19 +144,19 @@ pred_inter_2 <- function(x) {
     bereavement_high_t   = mean(
       judge_long[judge_long$content == "bereavement"
                  & judge_long$confidence_condition == 1
-                 & veracity == "t", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
     bereavement_high_f   = mean(
       judge_long[judge_long$content == "bereavement"
                  & judge_long$confidence_condition == 1
-                 & veracity == "f", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
     holiday_high_t       = mean(
       judge_long[judge_long$content == "holiday"
                  & judge_long$confidence_condition == 1
-                 & judgel_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "t", ]$pred_temp, na.rm = TRUE),
     holiday_high_f       = mean(
       judge_long[judge_long$content == "holiday"
                  & judge_long$confidence_condition == 1
-                 & judgel_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
     quarrel_high_t       = mean(
       judge_long[judge_long$content == "quarrel"
                  & judge_long$confidence_condition == 1
@@ -164,7 +164,7 @@ pred_inter_2 <- function(x) {
     quarrel_high_f       = mean(
       judge_long[judge_long$content == "quarrel"
                  & judge_long$confidence_condition == 1
-                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE),
+                 & judge_long$veracity == "f", ]$pred_temp, na.rm = TRUE)
   )
   
   return(out)
@@ -484,12 +484,16 @@ sdt_model_acc <- lm(dprime ~ confidence_condition,  data = sdt_data)
 
 ### Simple model
 
-acc_conf_model_comp <- glmer(accuracy ~ confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_conf_model_base <- glmer(accuracy ~ confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### A model adding receiver confidence to retained model
 
-acc_conf_model_comp <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_recconf_model_comp <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+
+### A model adding the interaction between receiver confidence and sender confidence
+
+acc_recconf_model_int <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### Comparison with base accuracy model
 
-lrt_confidence <- anova(acc_model_conf_int_3, acc_conf_model_comp)
+lrt_confidence <- anova(acc_model_conf_int_3, acc_recconf_model_comp, acc_recconf_model_int)
