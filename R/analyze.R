@@ -440,7 +440,7 @@ if (file.exists("./RDS/boot_fixed_inter_2.rds")) {
   
   boot_fixed_inter_2 <- bootMer(judge_fixed_conf_int_2, pred_inter_2, nsim = 500, parallel = "multicore")
   
-  saveRDS(boot_fixed_inter, "./RDS/boot_fixed_inter_2.rds")
+  saveRDS(boot_fixed_inter_2, "./RDS/boot_fixed_inter_2.rds")
   
 }
 
@@ -475,6 +475,35 @@ acc_model_conf_int_3 <- glmer(accuracy ~ (veracity + content + confidence_condit
 ### Compare models
 
 lrt_acc <- anova(acc_model_base, acc_model_conf, acc_model_conf_int, acc_model_conf_int_2, acc_model_conf_int_3, test = "LRT")
+
+## Mean predicted accuracy
+
+### Add predictions
+
+accuracy_long$pred_fixed <- predict(acc_model_conf_int_3, type = "response")
+
+### By condition, content, and veracity
+
+acc_rates_fixed_cond_cont_ver <- 
+  accuracy_long %>% 
+  group_by(confidence_condition, content, veracity) %>% 
+  summarise(
+    mean  = mean(pred_fixed, na.rm = TRUE)
+  )
+
+if (file.exists("./RDS/boot_fixed_acc_inter_3.rds")) {
+  
+  boot_fixed_acc_inter_3 <- readRDS("./RDS/boot_fixed_acc_inter_3.rds")
+  
+} else {
+  
+  boot_fixed_acc_inter_3 <- bootMer(acc_model_conf_int_3, pred_inter_2, nsim = 500, parallel = "multicore")
+  
+  saveRDS(boot_fixed_acc_inter_3, "./RDS/boot_fixed_acc_inter_3.rds")
+  
+}
+
+boot_ci_fixed_acc_inter_3 <- bootstrap_ci(boot_fixed_acc_inter_3)
 
 ## Signal detection approach
 

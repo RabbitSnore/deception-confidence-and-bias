@@ -27,11 +27,7 @@ To assess whether sender confidence (a manipulated variable) increases truth bia
 lrt_judge_fixed
 ```
 
-Actual veracity was not a significant predictor of judged veracity. 
-
-The coefficient for confidence condition is positive and significant, suggesting that sender confidence makes receivers more likely to judge messages as truthful, for the holiday messages. The coefficients for the interactions suggest that sender confidence had different effects depending on the message content. For bereavement messages, the effect was similar to the effect for holiday messages. For quarrels, high sender confidence seemed to decrease the rate of truth judgments. For accidents, high sender confidence did not seem to have much of an effect (note that the interaction coefficient is significant, but the sum of the relevant coefficients suggests only a small difference in effects). That is, for accidents, high confidence had less of an impact on truth judgments than it did for holiday messages.
-
-Additionally, there is some variance in the tendency for different senders to be judged as telling the truth. There is less -- but still some -- variance in receivers' tendency to judge messages as truthful.
+The coefficient for sender confidence was significant and positive, indicating that more confident senders were viewed as more likely to be truthful when talking about holidays. Additionally, the interaction terms for sender confidence with accident messages and with quarrel messages were significant and negative. These results suggest that sender confidence had little or no effect on veracity judgments for messages about accidents, and higher sender confidence was associated with fewer truth judgments for messages about quarrels. In short, the confidence with which senders presented their stories appeared to influence receivers’ veracity judgments, but this relationship was moderated by the content of the message. Additionally, sender veracity significantly interacted with message content, such that truthful messages about bereavements and quarrels were more likely to be judged as truths, compared to messages about holidays. Table 2 displays the raw rates of truth judgments as well as mean predicted truth judgment rates derived from the retained model for each condition. 
 
 ```{r}
 summary(judge_fixed_conf_int)
@@ -40,32 +36,6 @@ summary(judge_fixed_conf_int)
 ### Mean predicted truth judgment rates
 
 For a more intuitive examination of the results of the model above, we can extract predicted truth judgment rates and calculate means for each condition, sender, and content type. For each mean predicted rate of truth judgments, I computed 95% parametric bootstrap confidence intervals using 500 simulations.
-
-First, we can examine the difference in truth judgment rates by condition. Below, the rates are displayed as proportions of truth judgments (i.e., values closer to 1 indicate higher truth bias). We can see that the high confidence condition is predicted to be judged more truthful more frequently, by about 5%.
-
-```{r}
-boot_ci_fixed_cond
-```
-
-As we saw above, there is substantial variation in the rate at which different senders are predicted to be judged as telling the truth.
-
-```{r}
-boot_ci_fixed_sender
-```
-
-We can also see that the mean predicted truth judgment rates vary substantially between the content types. Bereavement and holidays are predicted to be judged truthful the most frequently, and interestingly, quarrels are predicted to be judged deceptive a narrow majority of the time. Car accidents are predicted to be judged truthful narrowly above 50% of the time, but judged truthful less frequently than bereavements and holidays.
-
-```{r}
-boot_ci_fixed_cont
-```
-
-We can examine the interaction between confidence condition and message content as well. We can see that, as suggested by the model above, there are similar effects of sender confidence for holidays and bereavement messages. The rate of truth judgments for accidents does not change much. If anything, it increases by just a few percentage points, but the effect (if it is present at all) is more muted compared to holidays and bereavement messages. Quarrels seem to become somewhat less credible when delivered with high confidence. 
-
-```{r}
-boot_ci_fixed_inter
-```
-
-In short, we see that sender confidence appears to influence veracity judgments (or truth bias). This effect depends on the content of the message, and the specific sender also exerts substantial influence on veracity judgments.
 
 ```{r}
 boot_ci_fixed_inter_2
@@ -95,7 +65,7 @@ lrt_judge
 
 The model with random slopes fits the data the best, even though none of the fixed effects are significant (see below). In the model with only random intercepts, we see that there is a tendency for sender confidence to increase truth judgments on average, but adding the interaction substantially increases the standard error for this coefficient. Thus, we see evidence for an interaction between content type and confidence condition, such that sender confidence has effects of different sizes and/or directions depending on the content of the message. 
 
-These models are consistent with the fixed content effect approach above, as well as the signal detection model.
+These models are generally consistent with the fixed content effect approach above, as well as the signal detection model.
 
 ```{r}
 summary(judge_model_conf)
@@ -105,27 +75,6 @@ summary(judge_model_conf)
 summary(judge_model_conf_int)
 ```
 
-### Mean predicted truth judgment rates
-
-As above, for a more intuitive examination of the results of the model above, we can use these models to extract predicted truth judgment rates and calculate means for each condition, sender, and content type. Again, for each mean predicted rate of truth judgments, I computed 95% parametric bootstrap confidence intervals using 500 simulations.
-
-These predicted rates of truth judgments are highly consistent with the approach presented above.
-
-```{r}
-boot_ci_cond
-```
-
-```{r}
-boot_ci_sender
-```
-
-```{r}
-boot_ci_cont
-```
-
-```{r}
-boot_ci_inter
-```
 
 ### Raw veracity judgment rates
 
@@ -178,22 +127,13 @@ judge_long %>%
 
 ## Raw judgments
 
-To assess whether sender confidence influenced receiver accuracy, we conducted a mixed effects logistic regression analysis. As with the analysis of truth judgments, we began with a model in which judgment accuracy (0 = incorrect, 1 = correct) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested the subsequent models after the initial model offered no significant improvement.
+To assess whether sender confidence influenced receiver accuracy, we conducted a mixed effects logistic regression analysis. As with the analysis of truth judgments, we began with a model in which judgment accuracy (0 = incorrect, 1 = correct) were predicted by actual sender veracity (lie vs. truth) and by message content (holiday, bereavement, accident, and quarrel; dummy coded with holiday as the reference group), as well as random intercepts for each receiver and each sender. We then fit a model that added confidence condition and a third model that added the interaction term between content and confidence condition. Then we compared the models to select one using a likelihood ratio test. As can be seen below, the test suggested the two subsequent models after the initial model offered no significant improvement, but the model adding the three-way interactions fit best.
 
 ```{r}
 lrt_acc
 ```
 
-Given that the model that added sender confidence as a predictor did not improve
-the model fit, there was no evidence that sender confidence predicted accuracy. 
-Actual sender veracity predicted accuracy, such that receivers were more 
-accurate judging truthful messages. This is unsurprising given the truth bias 
-that receivers exhibited. There was also no indication that the different content
- types varied with regard to receiver accuracy.
-
-Interestingly but consistent with past research, we see that there was virtually
- no variance in accuracy associated with receivers, but there was a substantial 
-amount of variance associated with senders.
+In the retained model, the coefficient for sender veracity was significant and positive, indicating that for messages about holidays, receivers judged truthful messages more accurately. The coefficient for sender confidence was significant and negative, suggesting a decrease in accuracy for messages about holidays when senders communicated more confidently. The significant interaction between sender confidence and veracity indicates that this increase was especially pronounced for truthful holiday messages communicated confidently. We also see significant increases in accuracy for messages about accidents and about quarrels. Accuracy for deceptive messages about quarrels was further, though only moderately, increased when senders conveyed their messages more confidently. Finally, the significant three-way interactions indicate that the improvement in accuracy conferred by sender confidence observed for messages for holidays was mitigated for messages about accidents and quarrels. Raw accuracy rates and mean predicted accuracy rates derived from the retained model for each condition are displayed in Table 4. Given the pattern of response biases we observed above, all these changes in accuracy are likely largely the result of shifting response bias, rather than improved discrimination.
 
 ```{r}
 summary(acc_model_conf_int_3)
@@ -256,6 +196,15 @@ accuracy_long %>%
     acc_rate = sum(accuracy == 1) / n()
   ) %>% 
   knitr::kable()
+```
+
+## Mean predicted accuracy
+
+We can also calculate predicted accuracy rates for each condition based on the 
+retained model.
+
+```{r}
+boot_ci_fixed_acc_inter_3
 ```
 
 
