@@ -2,11 +2,7 @@
 title: "Confidence and Bias -- Analysis"
 author: "Timothy J. Luke"
 date: "`r Sys.Date()`"
-output: 
-  html_document:
-    theme: darkly
-    toc: true
-    toc_float: true
+output: github_document
 ---
 
 ```{r setup, include = FALSE}
@@ -50,6 +46,18 @@ summary(sdt_model_base)
 ```
 
 We think the analyses of raw judgments are more informative (and more intuitive) than the signal detection analysis. But it's nice to see this kind of consistency.
+
+We can see the results in the descriptive statistics below as well.
+
+```{r}
+sdt_data %>% 
+  group_by(confidence_condition) %>% 
+  summarise(
+    mean_c   = mean(c),
+    sd_c     = sd(c),
+    median_c = median(c),
+  )
+```
 
 ## Message content as a random effect
 
