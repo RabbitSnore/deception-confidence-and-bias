@@ -6,7 +6,7 @@
 
 # Set up environment --------------------------------------------------
 
-packages <- c("tidyverse", "readxl", "lme4", "psycho")
+packages <- c("tidyverse", "readxl", "lme4", "psycho", "cowplot")
 
 lapply(packages, library, character.only = TRUE)
 

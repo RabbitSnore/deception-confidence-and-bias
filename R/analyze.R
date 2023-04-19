@@ -303,23 +303,23 @@ judge_long$content <- factor(judge_long$content, levels = c("holiday", "bereavem
 
 ### A base model with only random effects, veracity condition, and content
 
-judge_fixed_base <- glmer(judgment ~ veracity + content + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+judge_fixed_base <- glmer(judgment ~ veracity + content + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Adding sender confidence
 
-judge_fixed_conf <- glmer(judgment ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+judge_fixed_conf <- glmer(judgment ~ veracity + content + confidence_condition + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Adding the interaction between confidence condition and content
 
-judge_fixed_conf_int <- glmer(judgment ~ veracity + content * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+judge_fixed_conf_int <- glmer(judgment ~ veracity + content * confidence_condition + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Adding two way interactions
 
-judge_fixed_conf_int_2 <- glmer(judgment ~ (veracity + content + confidence_condition)^2 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+judge_fixed_conf_int_2 <- glmer(judgment ~ (veracity + content + confidence_condition)^2 + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Adding three way interactions
 
-judge_fixed_conf_int_3 <- glmer(judgment ~ (veracity + content + confidence_condition)^3 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long)
+judge_fixed_conf_int_3 <- glmer(judgment ~ (veracity + content + confidence_condition)^3 + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = judge_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Compare models
 
@@ -454,23 +454,23 @@ accuracy_long$content <- factor(accuracy_long$content, levels = c("holiday", "be
 
 ### A base model with only random effects and veracity condition
 
-acc_model_base <- glmer(accuracy ~ veracity + content + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_base <- glmer(accuracy ~ veracity + content + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### Adding sender confidence
 
-acc_model_conf <- glmer(accuracy ~ veracity + content + confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_conf <- glmer(accuracy ~ veracity + content + confidence_condition + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### The interaction between confidence condition and content
 
-acc_model_conf_int <- glmer(accuracy ~ veracity + content * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_conf_int <- glmer(accuracy ~ veracity + content * confidence_condition + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Interaction between veracity and content
 
-acc_model_conf_int_2 <- glmer(accuracy ~ (veracity + content + confidence_condition)^2 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_conf_int_2 <- glmer(accuracy ~ (veracity + content + confidence_condition)^2 + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Three way interactions
 
-acc_model_conf_int_3 <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_model_conf_int_3 <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + (1 + veracity|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Compare models
 
@@ -513,16 +513,125 @@ sdt_model_acc <- lm(dprime ~ confidence_condition,  data = sdt_data)
 
 ### Simple model
 
-acc_conf_model_base <- glmer(accuracy ~ confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_conf_model_base <- glmer(accuracy ~ confidence + (1 + confidence|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
 
 ### A model adding receiver confidence to retained model
 
-acc_recconf_model_comp <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_recconf_model_comp <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1 + veracity + confidence|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### A model adding the interaction between receiver confidence and sender confidence
 
-acc_recconf_model_int <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence * confidence_condition + (1|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long)
+acc_recconf_model_int <- glmer(accuracy ~ (veracity + content + confidence_condition)^3 + confidence * confidence_condition + (1 + veracity + confidence|id) + (1|sender), family = binomial(link = "logit"),  data = accuracy_long, control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 100000)))
 
 ### Comparison with base accuracy model
 
 lrt_confidence <- anova(acc_model_conf_int_3, acc_recconf_model_comp, acc_recconf_model_int)
+
+# Visualization ----------------------------------------------------------------
+
+judge_table <- boot_ci_fixed_inter_2 %>% 
+  mutate(
+    condition = rownames(.)
+  ) %>% 
+  extract(
+    col = "condition",
+    into = c("cont_conf", "content", "confidence", "veracity"),
+    regex = "((.*)_(.*))_(.*)"
+  )
+
+judge_plot <- 
+ggplot(judge_table,
+       aes(
+         y = estimate,
+         ymax = ci_ub,
+         ymin = ci_lb,
+         x = veracity,
+         color = content,
+         group = cont_conf,
+         linetype = confidence
+       )) +
+  geom_line(
+    position = position_dodge(width = .1),
+    linewidth = 1
+  ) +
+  geom_errorbar(
+    width = .20,
+    linewidth = 1,
+    position = position_dodge(width = .1)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, .10)
+  ) +
+  scale_x_discrete(
+    labels = c("Lie", "Truth")
+  ) +
+  scale_color_manual(
+    values = c("#84C7D0", "#F79824", "#9368B7", "#AA3E98")
+  ) +
+  labs(
+    color = "Content",
+    linetype = "Sender Confidence",
+    y = "Predicted Proportion of Truth Judgments",
+    x = "Veracity"
+  ) +
+  theme_classic()
+
+
+
+acc_table <- boot_ci_fixed_acc_inter_3 %>% 
+  mutate(
+    condition = rownames(.)
+  ) %>% 
+  extract(
+    col = "condition",
+    into = c("cont_conf", "content", "confidence", "veracity"),
+    regex = "((.*)_(.*))_(.*)"
+  )
+
+acc_plot <- 
+ggplot(acc_table,
+       aes(
+         y = estimate,
+         ymax = ci_ub,
+         ymin = ci_lb,
+         x = veracity,
+         color = content,
+         group = cont_conf,
+         linetype = confidence
+       )) +
+  geom_line(
+    position = position_dodge(width = .1),
+    linewidth = 1
+  ) +
+  geom_errorbar(
+    width = .20,
+    linewidth = 1,
+    position = position_dodge(width = .1)
+  ) +
+  scale_y_continuous(
+    limits = c(0, 1),
+    breaks = seq(0, 1, .10)
+  ) +
+  scale_x_discrete(
+    labels = c("Lie", "Truth")
+  ) +
+  scale_color_manual(
+    values = c("#84C7D0", "#F79824", "#9368B7", "#AA3E98")
+  ) +
+  labs(
+    color = "Content",
+    linetype = "Sender Confidence",
+    y = "Predicted Accuracy Rate",
+    x = "Veracity"
+  ) +
+  theme_classic()
+
+line_plots <- plot_grid(
+  judge_plot, acc_plot,
+  nrow = 1
+)
+
+save_plot("./figures/judge_acc_plot.png",
+          line_plots,
+          base_height = 5, base_width = 12)

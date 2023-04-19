@@ -1,7 +1,7 @@
 Confidence and Bias – Analysis
 ================
 Timothy J. Luke
-2022-11-25
+2023-04-19
 
 # Does sender confidence influence bias?
 
@@ -25,23 +25,23 @@ lrt_judge_fixed
 
     ## Data: judge_long
     ## Models:
-    ## judge_fixed_base: judgment ~ veracity + content + (1 | id) + (1 | sender)
-    ## judge_fixed_conf: judgment ~ veracity + content + confidence_condition + (1 | id) + (1 | sender)
-    ## judge_fixed_conf_int: judgment ~ veracity + content * confidence_condition + (1 | id) + (1 | sender)
-    ## judge_fixed_conf_int_2: judgment ~ (veracity + content + confidence_condition)^2 + (1 | id) + (1 | sender)
-    ## judge_fixed_conf_int_3: judgment ~ (veracity + content + confidence_condition)^3 + (1 | id) + (1 | sender)
+    ## judge_fixed_base: judgment ~ veracity + content + (1 + veracity | id) + (1 | sender)
+    ## judge_fixed_conf: judgment ~ veracity + content + confidence_condition + (1 + veracity | id) + (1 | sender)
+    ## judge_fixed_conf_int: judgment ~ veracity + content * confidence_condition + (1 + veracity | id) + (1 | sender)
+    ## judge_fixed_conf_int_2: judgment ~ (veracity + content + confidence_condition)^2 + (1 + veracity | id) + (1 | sender)
+    ## judge_fixed_conf_int_3: judgment ~ (veracity + content + confidence_condition)^3 + (1 + veracity | id) + (1 | sender)
     ##                        npar    AIC    BIC  logLik deviance   Chisq Df
-    ## judge_fixed_base          7 4545.6 4588.5 -2265.8   4531.6           
-    ## judge_fixed_conf          8 4539.5 4588.6 -2261.8   4523.5  8.0506  1
-    ## judge_fixed_conf_int     11 4528.7 4596.3 -2253.4   4506.7 16.7776  3
-    ## judge_fixed_conf_int_2   15 4514.2 4606.2 -2242.1   4484.2 22.5784  4
-    ## judge_fixed_conf_int_3   18 4514.9 4625.4 -2239.5   4478.9  5.2444  3
+    ## judge_fixed_base          9 4549.2 4604.5 -2265.6   4531.2           
+    ## judge_fixed_conf         10 4543.2 4604.6 -2261.6   4523.2  7.9849  1
+    ## judge_fixed_conf_int     13 4532.4 4612.2 -2253.2   4506.4 16.8078  3
+    ## judge_fixed_conf_int_2   17 4517.9 4622.2 -2241.9   4483.9 22.5530  4
+    ## judge_fixed_conf_int_3   20 4518.6 4641.4 -2239.3   4478.6  5.2262  3
     ##                        Pr(>Chisq)    
     ## judge_fixed_base                     
-    ## judge_fixed_conf        0.0045488 ** 
-    ## judge_fixed_conf_int    0.0007852 ***
-    ## judge_fixed_conf_int_2  0.0001537 ***
-    ## judge_fixed_conf_int_3  0.1547482    
+    ## judge_fixed_conf        0.0047168 ** 
+    ## judge_fixed_conf_int    0.0007741 ***
+    ## judge_fixed_conf_int_2  0.0001555 ***
+    ## judge_fixed_conf_int_3  0.1559610    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -69,34 +69,37 @@ summary(judge_fixed_conf_int)
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
     ##  Family: binomial  ( logit )
-    ## Formula: judgment ~ veracity + content * confidence_condition + (1 | id) +  
-    ##     (1 | sender)
+    ## Formula: 
+    ## judgment ~ veracity + content * confidence_condition + (1 + veracity |  
+    ##     id) + (1 | sender)
     ##    Data: judge_long
+    ## Control: glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 1e+05))
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   4528.7   4596.3  -2253.4   4506.7     3413 
+    ##   4532.4   4612.2  -2253.2   4506.4     3411 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.7829 -1.0359  0.6105  0.8491  1.4795 
+    ## -1.7806 -1.0376  0.6050  0.8531  1.4825 
     ## 
     ## Random effects:
-    ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.02774  0.1665  
-    ##  sender (Intercept) 0.05264  0.2294  
+    ##  Groups Name        Variance Std.Dev. Corr
+    ##  id     (Intercept) 0.018082 0.13447      
+    ##         veracityt   0.009075 0.09527  1.00
+    ##  sender (Intercept) 0.052472 0.22907      
     ## Number of obs: 3424, groups:  id, 428; sender, 8
     ## 
     ## Fixed effects:
     ##                                         Estimate Std. Error z value Pr(>|z|)
-    ## (Intercept)                              0.33282    0.21023   1.583 0.113400
-    ## veracityt                                0.21281    0.17721   1.201 0.229807
-    ## contentbereavement                      -0.01699    0.26897  -0.063 0.949619
-    ## contentaccident                         -0.47680    0.26816  -1.778 0.075394
-    ## contentquarrel                          -0.51756    0.26887  -1.925 0.054230
-    ## confidence_condition                     0.57778    0.14893   3.880 0.000105
-    ## contentbereavement:confidence_condition -0.21930    0.20677  -1.061 0.288877
-    ## contentaccident:confidence_condition    -0.42618    0.20207  -2.109 0.034941
-    ## contentquarrel:confidence_condition     -0.79777    0.20447  -3.902 9.56e-05
+    ## (Intercept)                              0.33208    0.20994   1.582 0.113693
+    ## veracityt                                0.21550    0.17715   1.217 0.223788
+    ## contentbereavement                      -0.01598    0.26868  -0.059 0.952571
+    ## contentaccident                         -0.47780    0.26785  -1.784 0.074453
+    ## contentquarrel                          -0.51647    0.26859  -1.923 0.054491
+    ## confidence_condition                     0.57864    0.14923   3.878 0.000105
+    ## contentbereavement:confidence_condition -0.21985    0.20688  -1.063 0.287935
+    ## contentaccident:confidence_condition    -0.42691    0.20225  -2.111 0.034792
+    ## contentquarrel:confidence_condition     -0.79927    0.20469  -3.905 9.43e-05
     ##                                            
     ## (Intercept)                                
     ## veracityt                                  
@@ -112,14 +115,16 @@ summary(judge_fixed_conf_int)
     ## 
     ## Correlation of Fixed Effects:
     ##             (Intr) vrctyt cntntb cntntc cntntq cnfdn_ cntntb:_ cntntc:_
-    ## veracityt   -0.423                                                     
+    ## veracityt   -0.421                                                     
     ## cntntbrvmnt -0.641  0.003                                              
     ## contntccdnt -0.642  0.001  0.501                                       
     ## contentqrrl -0.640  0.000  0.500  0.502                                
-    ## cnfdnc_cndt -0.317 -0.002  0.246  0.246  0.245                         
-    ## cntntbrvm:_  0.225  0.004 -0.354 -0.177 -0.177 -0.711                  
-    ## cntntccdn:_  0.231  0.001 -0.181 -0.355 -0.181 -0.728  0.524           
-    ## cntntqrrl:_  0.229 -0.002 -0.179 -0.179 -0.356 -0.720  0.518    0.530
+    ## cnfdnc_cndt -0.318 -0.002  0.246  0.246  0.245                         
+    ## cntntbrvm:_  0.225  0.003 -0.355 -0.177 -0.177 -0.711                  
+    ## cntntccdn:_  0.231  0.001 -0.181 -0.355 -0.181 -0.727  0.524           
+    ## cntntqrrl:_  0.229 -0.002 -0.179 -0.179 -0.357 -0.719  0.518    0.530  
+    ## optimizer (bobyqa) convergence code: 0 (OK)
+    ## boundary (singular) fit: see help('isSingular')
 
 ### Mean predicted truth judgment rates
 
@@ -134,22 +139,22 @@ boot_ci_fixed_inter_2
 ```
 
     ##                     estimate     ci_lb     ci_ub
-    ## accident_low_t     0.4587113 0.4102315 0.5227302
-    ## accident_low_f     0.5225064 0.4647090 0.5839228
-    ## bereavement_low_t  0.6487541 0.5923026 0.7009551
-    ## bereavement_low_f  0.5572086 0.4920545 0.6121546
-    ## holiday_low_t      0.5769142 0.5125063 0.6343389
-    ## holiday_low_f      0.6384112 0.5818410 0.6932241
-    ## quarrel_low_t      0.5964522 0.5286920 0.6552050
-    ## quarrel_low_f      0.3661006 0.3104107 0.4241640
-    ## accident_high_t    0.4990700 0.4472081 0.5663601
-    ## accident_high_f    0.5576057 0.4928642 0.6157483
-    ## bereavement_high_t 0.7276269 0.6775288 0.7807885
-    ## bereavement_high_f 0.6407061 0.5857073 0.6953966
-    ## holiday_high_t     0.7104517 0.6559212 0.7570780
-    ## holiday_high_f     0.7568530 0.7004193 0.7962496
-    ## quarrel_high_t     0.5444076 0.4836619 0.6054124
-    ## quarrel_high_f     0.3138813 0.2582041 0.3696439
+    ## accident_low_t     0.4584469 0.4012599 0.5331768
+    ## accident_low_f     0.5224657 0.4615928 0.5816012
+    ## bereavement_low_t  0.6495406 0.5895720 0.7069806
+    ## bereavement_low_f  0.5569975 0.4955340 0.6259484
+    ## holiday_low_t      0.5774612 0.5176668 0.6389609
+    ## holiday_low_f      0.6379456 0.5750714 0.6964053
+    ## quarrel_low_t      0.5967389 0.5371046 0.6570793
+    ## quarrel_low_f      0.3665838 0.3078988 0.4288884
+    ## accident_high_t    0.4990451 0.4340169 0.5654272
+    ## accident_high_f    0.5574281 0.4970595 0.6171265
+    ## bereavement_high_t 0.7285242 0.6682470 0.7787783
+    ## bereavement_high_f 0.6404329 0.5802357 0.7011472
+    ## holiday_high_t     0.7112198 0.6585390 0.7659205
+    ## holiday_high_f     0.7565163 0.7017986 0.8069508
+    ## quarrel_high_t     0.5448146 0.4737345 0.6024823
+    ## quarrel_high_f     0.3140602 0.2574792 0.3641243
 
 ## Signal detection
 
@@ -199,7 +204,7 @@ sdt_data %>%
   )
 ```
 
-    ## # A tibble: 2 x 4
+    ## # A tibble: 2 × 4
     ##   confidence_condition mean_c  sd_c median_c
     ##                  <dbl>  <dbl> <dbl>    <dbl>
     ## 1                    0  0.104 0.412    0    
@@ -459,17 +464,17 @@ lrt_acc
 
     ## Data: accuracy_long
     ## Models:
-    ## acc_model_base: accuracy ~ veracity + content + (1 | id) + (1 | sender)
-    ## acc_model_conf: accuracy ~ veracity + content + confidence_condition + (1 | id) + (1 | sender)
-    ## acc_model_conf_int: accuracy ~ veracity + content * confidence_condition + (1 | id) + (1 | sender)
-    ## acc_model_conf_int_2: accuracy ~ (veracity + content + confidence_condition)^2 + (1 | id) + (1 | sender)
-    ## acc_model_conf_int_3: accuracy ~ (veracity + content + confidence_condition)^3 + (1 | id) + (1 | sender)
+    ## acc_model_base: accuracy ~ veracity + content + (1 + veracity | id) + (1 | sender)
+    ## acc_model_conf: accuracy ~ veracity + content + confidence_condition + (1 + veracity | id) + (1 | sender)
+    ## acc_model_conf_int: accuracy ~ veracity + content * confidence_condition + (1 + veracity | id) + (1 | sender)
+    ## acc_model_conf_int_2: accuracy ~ (veracity + content + confidence_condition)^2 + (1 + veracity | id) + (1 | sender)
+    ## acc_model_conf_int_3: accuracy ~ (veracity + content + confidence_condition)^3 + (1 + veracity | id) + (1 | sender)
     ##                      npar    AIC    BIC  logLik deviance   Chisq Df Pr(>Chisq)
-    ## acc_model_base          7 4553.0 4596.0 -2269.5   4539.0                      
-    ## acc_model_conf          8 4555.0 4604.1 -2269.5   4539.0  0.0145  1  0.9041281
-    ## acc_model_conf_int     11 4555.2 4622.8 -2266.6   4533.2  5.7360  3  0.1251871
-    ## acc_model_conf_int_2   15 4526.1 4618.2 -2248.1   4496.1 37.1234  4  1.699e-07
-    ## acc_model_conf_int_3   18 4515.5 4626.0 -2239.8   4479.5 16.5622  3  0.0008694
+    ## acc_model_base          9 4555.8 4611.1 -2268.9   4537.8                      
+    ## acc_model_conf         10 4557.8 4619.2 -2268.9   4537.8  0.0057  1  0.9399545
+    ## acc_model_conf_int     13 4558.1 4637.9 -2266.0   4532.1  5.7615  3  0.1238108
+    ## acc_model_conf_int_2   17 4529.3 4633.7 -2247.7   4495.3 36.7648  4  2.014e-07
+    ## acc_model_conf_int_3   20 4518.6 4641.4 -2239.3   4478.6 16.6721  3  0.0008254
     ##                         
     ## acc_model_base          
     ## acc_model_conf          
@@ -506,58 +511,60 @@ summary(acc_model_conf_int_3)
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
     ##  Family: binomial  ( logit )
-    ## Formula: accuracy ~ (veracity + content + confidence_condition)^3 + (1 |  
-    ##     id) + (1 | sender)
+    ## Formula: accuracy ~ (veracity + content + confidence_condition)^3 + (1 +  
+    ##     veracity | id) + (1 | sender)
     ##    Data: accuracy_long
+    ## Control: glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 1e+05))
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   4515.5   4626.0  -2239.8   4479.5     3406 
+    ##   4518.6   4641.4  -2239.3   4478.6     3404 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.5785 -0.9238  0.6335  0.8649  1.7375 
+    ## -1.6267 -0.9321  0.6243  0.8661  1.7957 
     ## 
     ## Random effects:
-    ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 4e-14    2e-07   
-    ##  sender (Intercept) 0e+00    0e+00   
+    ##  Groups Name        Variance Std.Dev. Corr 
+    ##  id     (Intercept) 0.02031  0.1425        
+    ##         veracityt   0.13985  0.3740   -1.00
+    ##  sender (Intercept) 0.00000  0.0000        
     ## Number of obs: 3424, groups:  id, 428; sender, 8
     ## 
     ## Fixed effects:
     ##                                                   Estimate Std. Error z value
-    ## (Intercept)                                       -0.58345    0.14221  -4.103
-    ## veracityt                                          0.87384    0.19802   4.413
-    ## contentbereavement                                 0.48103    0.19718   2.440
-    ## contentaccident                                    0.42498    0.19734   2.154
-    ## contentquarrel                                     1.08684    0.20006   5.432
-    ## confidence_condition                              -0.52143    0.21293  -2.449
-    ## veracityt:contentbereavement                      -0.02193    0.28144  -0.078
-    ## veracityt:contentaccident                         -0.94899    0.27710  -3.425
-    ## veracityt:contentquarrel                          -1.02959    0.27960  -3.682
-    ## veracityt:confidence_condition                     1.14404    0.29545   3.872
-    ## contentbereavement:confidence_condition           -0.09050    0.29201  -0.310
-    ## contentaccident:confidence_condition               0.51994    0.28802   1.805
-    ## contentquarrel:confidence_condition                0.84087    0.29543   2.846
-    ## veracityt:contentbereavement:confidence_condition -0.45879    0.41316  -1.110
-    ## veracityt:contentaccident:confidence_condition    -0.84318    0.40319  -2.091
-    ## veracityt:contentquarrel:confidence_condition     -1.59432    0.40914  -3.897
+    ## (Intercept)                                       -0.58634    0.14297  -4.101
+    ## veracityt                                          0.88062    0.20067   4.389
+    ## contentbereavement                                 0.48341    0.19768   2.445
+    ## contentaccident                                    0.42706    0.19785   2.159
+    ## contentquarrel                                     1.09223    0.20077   5.440
+    ## confidence_condition                              -0.52366    0.21388  -2.448
+    ## veracityt:contentbereavement                      -0.01856    0.28272  -0.066
+    ## veracityt:contentaccident                         -0.95811    0.27852  -3.440
+    ## veracityt:contentquarrel                          -1.03424    0.28099  -3.681
+    ## veracityt:confidence_condition                     1.15392    0.29906   3.859
+    ## contentbereavement:confidence_condition           -0.09126    0.29267  -0.312
+    ## contentaccident:confidence_condition               0.52216    0.28873   1.808
+    ## contentquarrel:confidence_condition                0.84457    0.29618   2.852
+    ## veracityt:contentbereavement:confidence_condition -0.46477    0.41492  -1.120
+    ## veracityt:contentaccident:confidence_condition    -0.84903    0.40500  -2.096
+    ## veracityt:contentquarrel:confidence_condition     -1.60738    0.41114  -3.910
     ##                                                   Pr(>|z|)    
-    ## (Intercept)                                       4.08e-05 ***
-    ## veracityt                                         1.02e-05 ***
-    ## contentbereavement                                0.014704 *  
-    ## contentaccident                                   0.031277 *  
-    ## contentquarrel                                    5.56e-08 ***
-    ## confidence_condition                              0.014332 *  
-    ## veracityt:contentbereavement                      0.937893    
-    ## veracityt:contentaccident                         0.000615 ***
-    ## veracityt:contentquarrel                          0.000231 ***
-    ## veracityt:confidence_condition                    0.000108 ***
-    ## contentbereavement:confidence_condition           0.756622    
-    ## contentaccident:confidence_condition              0.071045 .  
-    ## contentquarrel:confidence_condition               0.004424 ** 
-    ## veracityt:contentbereavement:confidence_condition 0.266820    
-    ## veracityt:contentaccident:confidence_condition    0.036504 *  
-    ## veracityt:contentquarrel:confidence_condition     9.75e-05 ***
+    ## (Intercept)                                       4.11e-05 ***
+    ## veracityt                                         1.14e-05 ***
+    ## contentbereavement                                0.014469 *  
+    ## contentaccident                                   0.030887 *  
+    ## contentquarrel                                    5.32e-08 ***
+    ## confidence_condition                              0.014347 *  
+    ## veracityt:contentbereavement                      0.947650    
+    ## veracityt:contentaccident                         0.000582 ***
+    ## veracityt:contentquarrel                          0.000233 ***
+    ## veracityt:confidence_condition                    0.000114 ***
+    ## contentbereavement:confidence_condition           0.755186    
+    ## contentaccident:confidence_condition              0.070535 .  
+    ## contentquarrel:confidence_condition               0.004350 ** 
+    ## veracityt:contentbereavement:confidence_condition 0.262652    
+    ## veracityt:contentaccident:confidence_condition    0.036050 *  
+    ## veracityt:contentquarrel:confidence_condition     9.25e-05 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
@@ -566,7 +573,7 @@ summary(acc_model_conf_int_3)
     ## Use print(x, correlation=TRUE)  or
     ##     vcov(x)        if you need it
 
-    ## optimizer (Nelder_Mead) convergence code: 0 (OK)
+    ## optimizer (bobyqa) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
 
 ### Accuracy rates
@@ -690,22 +697,22 @@ boot_ci_fixed_acc_inter_3
 ```
 
     ##                     estimate     ci_lb     ci_ub
-    ## accident_low_t     0.4418605 0.3782882 0.5072764
-    ## accident_low_f     0.4604651 0.3980258 0.5303691
-    ## bereavement_low_t  0.6790698 0.6212207 0.7357712
-    ## bereavement_low_f  0.4744186 0.4081906 0.5389967
-    ## holiday_low_t      0.5720930 0.5102081 0.6352065
-    ## holiday_low_f      0.3581395 0.3061222 0.4155937
-    ## quarrel_low_t      0.5860465 0.5160317 0.6437805
-    ## quarrel_low_f      0.6232558 0.5606324 0.6826655
-    ## accident_high_t    0.5164319 0.4516356 0.5878268
-    ## accident_high_f    0.4600939 0.3992246 0.5262937
-    ## bereavement_high_t 0.6948357 0.6344739 0.7578756
-    ## bereavement_high_f 0.3286385 0.2683483 0.3838897
-    ## holiday_high_t     0.7136150 0.6560116 0.7670234
-    ## holiday_high_f     0.2488263 0.1977867 0.3070252
-    ## quarrel_high_t     0.5539906 0.4892694 0.6250900
-    ## quarrel_high_f     0.6948357 0.6398393 0.7557898
+    ## accident_low_t     0.4410930 0.3791267 0.5040982
+    ## accident_low_f     0.4603044 0.3964070 0.5348836
+    ## bereavement_low_t  0.6809963 0.6182056 0.7424653
+    ## bereavement_low_f  0.4743246 0.4019499 0.5444064
+    ## holiday_low_t      0.5729440 0.5095166 0.6418686
+    ## holiday_low_f      0.3575416 0.2929529 0.4183365
+    ## quarrel_low_t      0.5870583 0.5212606 0.6540393
+    ## quarrel_low_f      0.6238316 0.5583198 0.6872415
+    ## accident_high_t    0.5165668 0.4494919 0.5875054
+    ## accident_high_f    0.4599492 0.3938083 0.5307914
+    ## bereavement_high_t 0.6968592 0.6356615 0.7621520
+    ## bereavement_high_f 0.3279560 0.2686042 0.3956610
+    ## holiday_high_t     0.7157551 0.6589393 0.7721610
+    ## holiday_high_f     0.2479663 0.1881606 0.3157302
+    ## quarrel_high_t     0.5545953 0.4833601 0.6247683
+    ## quarrel_high_f     0.6956615 0.6270206 0.7602191
 
 ## Signal detection
 
@@ -752,13 +759,13 @@ lrt_confidence
 
     ## Data: accuracy_long
     ## Models:
-    ## acc_model_conf_int_3: accuracy ~ (veracity + content + confidence_condition)^3 + (1 | id) + (1 | sender)
-    ## acc_recconf_model_comp: accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1 | id) + (1 | sender)
-    ## acc_recconf_model_int: accuracy ~ (veracity + content + confidence_condition)^3 + confidence * confidence_condition + (1 | id) + (1 | sender)
+    ## acc_model_conf_int_3: accuracy ~ (veracity + content + confidence_condition)^3 + (1 + veracity | id) + (1 | sender)
+    ## acc_recconf_model_comp: accuracy ~ (veracity + content + confidence_condition)^3 + confidence + (1 + veracity + confidence | id) + (1 | sender)
+    ## acc_recconf_model_int: accuracy ~ (veracity + content + confidence_condition)^3 + confidence * confidence_condition + (1 + veracity + confidence | id) + (1 | sender)
     ##                        npar    AIC    BIC  logLik deviance  Chisq Df Pr(>Chisq)
-    ## acc_model_conf_int_3     18 4515.5 4626.0 -2239.8   4479.5                     
-    ## acc_recconf_model_comp   19 4517.4 4634.0 -2239.7   4479.4 0.1846  1     0.6675
-    ## acc_recconf_model_int    20 4517.3 4640.1 -2238.7   4477.3 2.0224  1     0.1550
+    ## acc_model_conf_int_3     20 4518.6 4641.4 -2239.3   4478.6                     
+    ## acc_recconf_model_comp   24 4526.3 4673.6 -2239.1   4478.3 0.3505  4     0.9863
+    ## acc_recconf_model_int    25 4526.2 4679.7 -2238.1   4476.2 2.0792  1     0.1493
 
 For the sake of completeness, here is the main model output. As can be
 seen, confidence did not appear to predict accuracy at all.
@@ -770,29 +777,30 @@ summary(acc_conf_model_base)
     ## Generalized linear mixed model fit by maximum likelihood (Laplace
     ##   Approximation) [glmerMod]
     ##  Family: binomial  ( logit )
-    ## Formula: accuracy ~ confidence + (1 | id) + (1 | sender)
+    ## Formula: accuracy ~ confidence + (1 + confidence | id) + (1 | sender)
     ##    Data: accuracy_long
     ## 
     ##      AIC      BIC   logLik deviance df.resid 
-    ##   4552.5   4577.1  -2272.3   4544.5     3420 
+    ##   4556.4   4593.2  -2272.2   4544.4     3418 
     ## 
     ## Scaled residuals: 
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.4726 -0.9358  0.6814  0.8692  1.5280 
+    ## -1.4928 -0.9347  0.6803  0.8659  1.5299 
     ## 
     ## Random effects:
-    ##  Groups Name        Variance Std.Dev.
-    ##  id     (Intercept) 0.0000   0.0000  
-    ##  sender (Intercept) 0.2733   0.5227  
+    ##  Groups Name        Variance Std.Dev. Corr 
+    ##  id     (Intercept) 0.197927 0.44489       
+    ##         confidence  0.002426 0.04926  -1.00
+    ##  sender (Intercept) 0.275158 0.52456       
     ## Number of obs: 3424, groups:  id, 428; sender, 8
     ## 
     ## Fixed effects:
     ##             Estimate Std. Error z value Pr(>|z|)
-    ## (Intercept) 0.051967   0.242397   0.214    0.830
-    ## confidence  0.006994   0.020007   0.350    0.727
+    ## (Intercept) 0.052330   0.245364   0.213    0.831
+    ## confidence  0.006983   0.020410   0.342    0.732
     ## 
     ## Correlation of Fixed Effects:
     ##            (Intr)
-    ## confidence -0.630
+    ## confidence -0.638
     ## optimizer (Nelder_Mead) convergence code: 0 (OK)
     ## boundary (singular) fit: see help('isSingular')
